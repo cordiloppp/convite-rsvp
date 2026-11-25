@@ -1,19 +1,46 @@
-import { useState, type FormEvent } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState, type FormEvent } from "react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { api, getToken, setToken } from "../../api/client";
 import { Button, ErrorBanner, Field, inputClass } from "../../components/ui";
 import { useConfig } from "../../hooks/useConfig";
 
 export default function Login() {
-  const { brand_name } = useConfig();
+  const { brand_name, demo_readonly } = useConfig();
   const navigate = useNavigate();
   const location = useLocation();
+  // Public demo: visitors enter without an account. "?cuenta" shows the form (owner).
+  const conCuenta = new URLSearchParams(location.search).has("cuenta");
+  const destino = (location.state as { from?: string } | null)?.from ?? "/";
+  const [demoFallo, setDemoFallo] = useState(false);
+
+  useEffect(() => {
+    if (!demo_readonly || conCuenta || getToken()) return;
+    api
+      .demoLogin()
+      .then(({ access_token }) => {
+        setToken(access_token);
+        navigate(destino, { replace: true });
+      })
+      .catch(() => setDemoFallo(true));
+  }, [demo_readonly, conCuenta, destino, navigate]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
 
   if (getToken()) return <Navigate to="/" replace />;
+
+  if (demo_readonly && !conCuenta && !demoFallo) {
+    return (
+      <main className="flex min-h-dvh flex-col items-center justify-center gap-3 px-4 text-center">
+        <p className="font-serif text-4xl font-medium tracking-wide">{brand_name}</p>
+        <p className="text-sm text-gris">Abriendo la demo, no necesitas cuenta…</p>
+        <Link to="/login?cuenta" className="text-xs text-gris underline underline-offset-4">
+          Entrar con cuenta
+        </Link>
+      </main>
+    );
+  }
 
   async function submit(event: FormEvent) {
     event.preventDefault();

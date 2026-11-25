@@ -23,6 +23,16 @@ def login(data: LoginRequest, db: DbSession) -> TokenResponse:
     return TokenResponse(access_token=create_access_token(planner.id, can_write=can_write))
 
 
+@router.post("/demo", response_model=TokenResponse)
+def demo(db: DbSession) -> TokenResponse:
+    """Read-only session of the demo account, so visitors need no account."""
+    settings = get_settings()
+    planner = db.scalar(select(Planner).where(Planner.email == settings.demo_email))
+    if not settings.demo_readonly or planner is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="No hay demo disponible")
+    return TokenResponse(access_token=create_access_token(planner.id, can_write=False))
+
+
 @router.get("/me", response_model=PlannerOut)
 def me(planner: CurrentPlanner) -> Planner:
     return planner

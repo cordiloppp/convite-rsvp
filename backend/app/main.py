@@ -17,7 +17,7 @@ async def demo_readonly(request: Request, call_next):
     if (
         get_settings().demo_readonly
         and request.method in WRITE_METHODS
-        and request.url.path != "/api/auth/login"
+        and request.url.path not in ("/api/auth/login", "/api/auth/demo")
     ):
         header = request.headers.get("authorization", "")
         token = header[7:] if header.lower().startswith("bearer ") else ""

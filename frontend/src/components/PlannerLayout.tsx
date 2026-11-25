@@ -1,5 +1,5 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { setToken } from "../api/client";
+import { canWrite, setToken } from "../api/client";
 import { useConfig } from "../hooks/useConfig";
 import { DemoBanner } from "./DemoBanner";
 import { Button } from "./ui";
@@ -8,9 +8,12 @@ export function PlannerLayout({ nombre }: { nombre: string }) {
   const { brand_name } = useConfig();
   const navigate = useNavigate();
 
+  const demo = !canWrite();
+
   function logout() {
     setToken(null);
-    navigate("/login", { replace: true });
+    // In the read-only demo, "Salir" leads to the owner's login instead of re-entering.
+    navigate(demo ? "/login?cuenta" : "/login", { replace: true });
   }
 
   return (
@@ -23,7 +26,7 @@ export function PlannerLayout({ nombre }: { nombre: string }) {
           <div className="flex items-center gap-2">
             <span className="hidden text-sm text-gris sm:inline">{nombre}</span>
             <Button variant="ghost" onClick={logout}>
-              Salir
+              {demo ? "Entrar con cuenta" : "Salir"}
             </Button>
           </div>
         </div>

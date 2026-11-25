@@ -32,6 +32,8 @@ class Settings(BaseSettings):
     # but only a session opened with OWNER_PASSWORD can change data.
     demo_readonly: bool = False
     owner_password: str | None = Field(default=None, min_length=12)
+    # Account visitors enter without a password while the demo is read-only.
+    demo_email: str = "demo@convite.mx"
 
     @model_validator(mode="after")
     def _require_database(self) -> "Settings":

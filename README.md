@@ -2,7 +2,7 @@
 
 Demo de una plataforma de invitaciones digitales con confirmación de asistencia (RSVP) para planners de eventos.
 
-**Demo en vivo:** https://convite-rsvp.vercel.app · entra con `demo@convite.mx` / `convite-demo-2026` · invitación de ejemplo: https://convite-rsvp.vercel.app/i/demo-boda-pendiente
+**Demo en vivo:** https://convite-rsvp.vercel.app · entra directo, sin cuenta · invitación de ejemplo: https://convite-rsvp.vercel.app/i/demo-boda-pendiente
 
 > La demo pública es de **solo lectura**: puedes recorrer el panel y las invitaciones, pero los cambios no se guardan.
 

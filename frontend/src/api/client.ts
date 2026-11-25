@@ -90,6 +90,7 @@ function jsonBody(method: string, body: unknown): RequestInit {
 
 export const api = {
   config: () => json<PublicConfig>("/api/config"),
+  demoLogin: () => json<{ access_token: string }>("/api/auth/demo", { method: "POST" }),
   login: (email: string, password: string) =>
     json<{ access_token: string }>("/api/auth/login", jsonBody("POST", { email, password })),
   me: () => json<Planner>("/api/auth/me"),

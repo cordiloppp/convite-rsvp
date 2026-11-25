@@ -66,6 +66,24 @@ XV_GRUPOS = (
 )
 
 
+CUMPLE_GRUPOS = (
+    ("Hijos y nietos de Don Ramiro", 8), ("Familia Ortega Lara", 4), ("Compadres Valdez", 2),
+    ("Familia Elizondo", 5), ("Amigos del club de dominó", 6), ("Familia Herrera Quiroz", 4),
+    ("Sr. y Sra. Pacheco", 2), ("Familia Gallardo", 3), ("Vecinos de la colonia Marrón", 5),
+    ("Familia Ibáñez", 4), ("Excompañeros de la maquiladora", 6), ("Sobrinos Rangel", 3),
+    ("Familia Treviño Solís", 4), ("Padre Agustín", 1), ("Familia Mendívil", 3),
+    ("Sra. Lupita y familia", 4), ("Familia Cota", 3), ("Primos de Mexicali", 5),
+)
+
+BAUTIZO_GRUPOS = (
+    ("Padrinos Hernández Ríos", 2), ("Abuelos paternos", 2), ("Abuelos maternos", 2),
+    ("Familia Bermúdez", 4), ("Tíos Leyva", 3), ("Familia Camacho Ruiz", 5),
+    ("Primos Soto", 4), ("Familia Arce", 3), ("Amigos de la colonia", 6),
+    ("Familia Pérez Lomelí", 4), ("Tía Carmen y familia", 3), ("Familia Rosales", 4),
+    ("Compañeras de trabajo de mamá", 5), ("Familia Lucero", 2),
+)
+
+
 @dataclass(frozen=True)
 class Plan:
     clave: str
@@ -127,14 +145,69 @@ def _agregar_invitados(
         event.guests.append(guest)
 
 
+def _eventos_extra(ahora: datetime, rng: random.Random) -> list[Event]:
+    """Two more events so the demo panel looks like a planner's real week."""
+    cumple_fecha = _proximo_sabado(ahora, 30, time(14, 0))
+    cumple_lugar = "Quinta Los Olivos"
+    cumple_direccion = "Calle Río Colorado 2350, Col. Marrón, 22015 Tijuana, B.C."
+    cumple = Event(
+        nombre="Cumpleaños 60 de Don Ramiro",
+        tipo="cumpleaños",
+        fecha_hora=cumple_fecha,
+        lugar_nombre=cumple_lugar,
+        direccion=cumple_direccion,
+        link_mapa=_mapa(cumple_lugar, cumple_direccion),
+        mensaje=(
+            "Sesenta años de trabajo, familia y amigos. Acompáñanos a celebrar a "
+            "Don Ramiro con una comida en familia."
+        ),
+        fecha_limite_confirmacion=cumple_fecha - timedelta(days=10),
+    )
+
+    bautizo_fecha = _proximo_sabado(ahora, 20, time(12, 0))
+    bautizo_lugar = "Salón Jardín Imperial"
+    bautizo_direccion = "Av. Revolución 1450, Zona Centro, 22000 Tijuana, B.C."
+    bautizo = Event(
+        nombre="Bautizo de Mateo",
+        tipo="otro",
+        fecha_hora=bautizo_fecha,
+        lugar_nombre=bautizo_lugar,
+        direccion=bautizo_direccion,
+        link_mapa=_mapa(bautizo_lugar, bautizo_direccion),
+        mensaje=(
+            "Con mucha alegría te invitamos al bautizo de nuestro hijo Mateo y a "
+            "la comida que tendremos después de la ceremonia."
+        ),
+        fecha_limite_confirmacion=bautizo_fecha - timedelta(days=7),
+    )
+
+    _agregar_invitados(cumple, CUMPLE_GRUPOS, Plan("cumple", 9, 2, 2), rng, {})
+    _agregar_invitados(bautizo, BAUTIZO_GRUPOS, Plan("bautizo", 8, 1, 1), rng, {})
+    return [cumple, bautizo]
+
+
+def _agregar_extras(planner: Planner, ahora: datetime) -> int:
+    """Adds the extra events the planner does not have yet. Returns how many."""
+    existentes = {event.nombre for event in planner.events}
+    nuevos = [e for e in _eventos_extra(ahora, random.Random(2027)) if e.nombre not in existentes]
+    planner.events.extend(nuevos)
+    return len(nuevos)
+
+
 def seed() -> None:
     settings = get_settings()
     if not settings.seed_demo:
         return
 
     with SessionLocal() as db:
-        if db.scalar(select(Planner).where(Planner.email == DEMO_EMAIL)):
-            print("Seed: el planner demo ya existe, no se modifica nada.")
+        existente = db.scalar(select(Planner).where(Planner.email == DEMO_EMAIL))
+        if existente:
+            agregados = _agregar_extras(existente, datetime.now(settings.timezone))
+            db.commit()
+            if agregados:
+                print(f"Seed: el planner demo ya existía, se agregaron {agregados} eventos.")
+            else:
+                print("Seed: el planner demo ya existe, no se modifica nada.")
             return
 
         rng = random.Random(2026)
@@ -184,6 +257,7 @@ def seed() -> None:
         _agregar_invitados(boda, BODA_GRUPOS, Plan("boda", 13, 3, 4), rng, tokens)
         _agregar_invitados(xv, XV_GRUPOS, Plan("xv", 11, 2, 5), rng, tokens)
         planner.events.extend([boda, xv])
+        _agregar_extras(planner, ahora)
         db.add(planner)
         db.commit()
 

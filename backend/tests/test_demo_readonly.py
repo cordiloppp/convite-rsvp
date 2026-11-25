@@ -70,3 +70,22 @@ def test_sin_modo_demo_todo_funciona_normal(client, make_planner, make_event, ma
     headers = bearer(login(client, "demo@example.com", TEST_PASSWORD))
     response = client.delete(f"/api/events/{event.id}/guests/{guest.id}", headers=headers)
     assert response.status_code == 204
+
+
+def test_demo_sin_cuenta_da_sesion_de_solo_lectura(client, readonly, make_planner, make_event, make_guest, monkeypatch):
+    monkeypatch.setattr(get_settings(), "demo_email", "demo@example.com")
+    event = make_event(make_planner("demo@example.com"))
+    guest = make_guest(event)
+
+    response = client.post("/api/auth/demo")
+    assert response.status_code == 200
+    headers = bearer(response)
+
+    assert client.get(f"/api/events/{event.id}/panel", headers=headers).status_code == 200
+    blocked = client.delete(f"/api/events/{event.id}/guests/{guest.id}", headers=headers)
+    assert blocked.status_code == 403
+
+
+def test_demo_sin_cuenta_no_existe_fuera_del_modo_demo(client, make_planner):
+    make_planner("demo@convite.mx")
+    assert client.post("/api/auth/demo").status_code == 404
