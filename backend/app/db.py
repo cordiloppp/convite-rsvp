@@ -1,6 +1,7 @@
+import os
 from collections.abc import Iterator
 
-from sqlalchemy import MetaData, create_engine
+from sqlalchemy import MetaData, NullPool, create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from app.config import get_settings
@@ -18,7 +19,11 @@ class Base(DeclarativeBase):
     metadata = MetaData(naming_convention=NAMING_CONVENTION)
 
 
-engine = create_engine(get_settings().database_url, pool_pre_ping=True)
+if os.environ.get("VERCEL"):
+    # Serverless: don't keep connections between invocations; Neon's pooler handles it.
+    engine = create_engine(get_settings().database_url, poolclass=NullPool)
+else:
+    engine = create_engine(get_settings().database_url, pool_pre_ping=True)
 SessionLocal = sessionmaker(bind=engine, expire_on_commit=False)
 
 

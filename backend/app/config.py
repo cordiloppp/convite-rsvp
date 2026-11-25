@@ -1,19 +1,23 @@
 from functools import lru_cache
 from zoneinfo import ZoneInfo
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from sqlalchemy import URL
+from sqlalchemy import URL, make_url
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(extra="ignore")
 
+    # Option 1: a full connection string (Neon / Vercel set DATABASE_URL).
+    database_url_env: str | None = Field(default=None, alias="DATABASE_URL")
+
+    # Option 2: separate parts (docker compose).
     postgres_host: str = "db"
     postgres_port: int = 5432
-    postgres_user: str
-    postgres_password: str
-    postgres_db: str
+    postgres_user: str | None = None
+    postgres_password: str | None = None
+    postgres_db: str | None = None
 
     jwt_secret: str = Field(min_length=32)
     jwt_expire_minutes: int = 480
@@ -24,7 +28,21 @@ class Settings(BaseSettings):
     app_timezone: str = "America/Tijuana"
     seed_demo: bool = False
 
+    @model_validator(mode="after")
+    def _require_database(self) -> "Settings":
+        if not self.database_url_env and not (
+            self.postgres_user and self.postgres_password and self.postgres_db
+        ):
+            raise ValueError(
+                "Define DATABASE_URL o POSTGRES_USER, POSTGRES_PASSWORD y POSTGRES_DB"
+            )
+        return self
+
     def url_for(self, database: str) -> URL:
+        if self.database_url_env:
+            url = make_url(self.database_url_env)
+            # Use the psycopg 3 driver whatever scheme the provider gives.
+            return url.set(drivername="postgresql+psycopg", database=database)
         return URL.create(
             "postgresql+psycopg",
             username=self.postgres_user,
@@ -36,7 +54,9 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> URL:
-        return self.url_for(self.postgres_db)
+        if self.database_url_env:
+            return self.url_for(make_url(self.database_url_env).database or "")
+        return self.url_for(self.postgres_db or "")
 
     @property
     def timezone(self) -> ZoneInfo:
