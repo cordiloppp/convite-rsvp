@@ -2,6 +2,8 @@
 
 Demo de una plataforma de invitaciones digitales con confirmación de asistencia (RSVP) para planners de eventos.
 
+<p align="center"><img src="docs/panel.webp" alt="Panel del planner" width="68%"> <img src="docs/invitacion.webp" alt="Invitación personalizada" width="28%"></p>
+
 - **Planner:** inicia sesión, crea eventos, agrega invitados y sigue las confirmaciones.
 - **Invitado:** no inicia sesión. Abre su link personalizado, ve la invitación y responde.
 
