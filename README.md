@@ -2,6 +2,10 @@
 
 Demo de una plataforma de invitaciones digitales con confirmación de asistencia (RSVP) para planners de eventos.
 
+**Demo en vivo:** https://convite-rsvp.vercel.app · entra con `demo@convite.mx` / `convite-demo-2026` · invitación de ejemplo: https://convite-rsvp.vercel.app/i/demo-boda-pendiente
+
+Publicado en Vercel (frontend y API como servicios) con PostgreSQL en Neon; ver [Publicar en Vercel](#publicar-en-vercel).
+
 <p align="center"><img src="docs/panel.webp" alt="Panel del planner" width="68%"> <img src="docs/invitacion.webp" alt="Invitación personalizada" width="28%"></p>
 
 - **Planner:** inicia sesión, crea eventos, agrega invitados y sigue las confirmaciones.
@@ -133,6 +137,16 @@ frontend/
     hooks/          polling y configuración
     pages/public/   invitación
     pages/planner/  login, eventos y panel
+```
+
+## Publicar en Vercel
+
+`vercel.json` publica `frontend/` (Vite) y `backend/` (FastAPI) como servicios del mismo proyecto: `/api` va al backend y las demás rutas a la app de React. La base es PostgreSQL en Neon, conectada desde el Marketplace de Vercel, que define `DATABASE_URL`.
+
+Variables en Vercel: `JWT_SECRET`, `PUBLIC_APP_URL` y `BRAND_URL`. Las migraciones y el seed se corren una vez contra la URL directa (sin pooler):
+
+```bash
+DATABASE_URL="<DATABASE_URL_UNPOOLED>" JWT_SECRET=... SEED_DEMO=true alembic upgrade head && python -m scripts.seed
 ```
 
 ## Reiniciar la demo
