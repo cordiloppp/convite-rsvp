@@ -4,6 +4,8 @@ Demo de una plataforma de invitaciones digitales con confirmación de asistencia
 
 **Demo en vivo:** https://convite-rsvp.vercel.app · entra con `demo@convite.mx` / `convite-demo-2026` · invitación de ejemplo: https://convite-rsvp.vercel.app/i/demo-boda-pendiente
 
+> La demo pública es de **solo lectura**: puedes recorrer el panel y las invitaciones, pero los cambios no se guardan.
+
 Publicado en Vercel (frontend y API como servicios) con PostgreSQL en Neon; ver [Publicar en Vercel](#publicar-en-vercel).
 
 <p align="center"><img src="docs/panel.webp" alt="Panel del planner" width="68%"> <img src="docs/invitacion.webp" alt="Invitación personalizada" width="28%"></p>
@@ -96,6 +98,8 @@ npm test
 | `PUBLIC_APP_URL` | Base de los links que reciben los invitados |
 | `APP_TIMEZONE` | Zona horaria en la que se capturan y muestran las fechas |
 | `SEED_DEMO` | Carga los datos de ejemplo si el planner demo no existe |
+| `DEMO_READONLY` | `true` bloquea toda escritura (crear, editar, borrar, importar, confirmar) salvo con la clave del dueño |
+| `OWNER_PASSWORD` | Clave privada (12+ caracteres) que abre cualquier cuenta con permiso de escritura en modo demo |
 
 ## Cómo se calcula el resumen
 
