@@ -40,6 +40,20 @@ export function setToken(token: string | null): void {
   }
 }
 
+/** True unless the session token was issued without write access (public demo). */
+export function canWrite(): boolean {
+  const token = getToken();
+  if (!token) return false;
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))) as {
+      rw?: boolean;
+    };
+    return payload.rw !== false;
+  } catch {
+    return false;
+  }
+}
+
 async function send(path: string, init: RequestInit = {}): Promise<Response> {
   const headers = new Headers(init.headers);
   const token = getToken();

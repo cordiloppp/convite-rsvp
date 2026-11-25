@@ -28,6 +28,11 @@ class Settings(BaseSettings):
     app_timezone: str = "America/Tijuana"
     seed_demo: bool = False
 
+    # Public demo: anyone can log in with the demo account and look around,
+    # but only a session opened with OWNER_PASSWORD can change data.
+    demo_readonly: bool = False
+    owner_password: str | None = Field(default=None, min_length=12)
+
     @model_validator(mode="after")
     def _require_database(self) -> "Settings":
         if not self.database_url_env and not (

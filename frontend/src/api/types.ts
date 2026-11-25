@@ -1,7 +1,12 @@
 export type EventType = "boda" | "xv" | "cumpleaños" | "otro";
 export type GuestStatus = "pendiente" | "confirmado" | "rechazado";
 
-export type PublicConfig = { brand_name: string; brand_url: string; timezone: string };
+export type PublicConfig = {
+  brand_name: string;
+  brand_url: string;
+  timezone: string;
+  demo_readonly?: boolean;
+};
 export type Planner = { id: number; nombre: string; email: string };
 
 export type EventData = {

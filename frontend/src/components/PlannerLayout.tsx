@@ -1,6 +1,7 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { setToken } from "../api/client";
 import { useConfig } from "../hooks/useConfig";
+import { DemoBanner } from "./DemoBanner";
 import { Button } from "./ui";
 
 export function PlannerLayout({ nombre }: { nombre: string }) {
@@ -27,6 +28,7 @@ export function PlannerLayout({ nombre }: { nombre: string }) {
           </div>
         </div>
       </header>
+      <DemoBanner />
       <main className="mx-auto max-w-6xl px-4 py-8">
         <Outlet />
       </main>

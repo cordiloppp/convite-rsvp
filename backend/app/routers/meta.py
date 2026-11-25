@@ -14,10 +14,11 @@ def health(db: DbSession) -> dict[str, str]:
 
 
 @router.get("/config")
-def public_config() -> dict[str, str]:
+def public_config() -> dict[str, str | bool]:
     settings = get_settings()
     return {
         "brand_name": settings.brand_name,
         "brand_url": settings.brand_url,
         "timezone": settings.app_timezone,
+        "demo_readonly": settings.demo_readonly,
     }

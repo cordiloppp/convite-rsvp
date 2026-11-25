@@ -25,13 +25,14 @@ def verify_password(password: str, password_hash: str | None) -> bool:
     return bcrypt.checkpw(candidate, password_hash.encode("ascii"))
 
 
-def create_access_token(planner_id: int) -> str:
+def create_access_token(planner_id: int, can_write: bool = True) -> str:
     settings = get_settings()
     now = datetime.now(UTC)
     payload = {
         "sub": str(planner_id),
         "iat": now,
         "exp": now + timedelta(minutes=settings.jwt_expire_minutes),
+        "rw": can_write,
     }
     return jwt.encode(payload, settings.jwt_secret, algorithm=ALGORITHM)
 
@@ -48,6 +49,25 @@ def decode_access_token(token: str) -> int | None:
         return int(payload["sub"])
     except (jwt.InvalidTokenError, ValueError):
         return None
+
+
+def token_can_write(token: str) -> bool:
+    """True solo si el token es válido y se emitió con permiso de escritura."""
+    try:
+        payload = jwt.decode(
+            token,
+            get_settings().jwt_secret,
+            algorithms=[ALGORITHM],
+            options={"require": ["exp", "sub"]},
+        )
+    except jwt.InvalidTokenError:
+        return False
+    return payload.get("rw") is True
+
+
+def owner_password_matches(password: str) -> bool:
+    owner = get_settings().owner_password
+    return bool(owner) and secrets.compare_digest(password.encode("utf-8"), owner.encode("utf-8"))
 
 
 def generate_guest_token() -> str:

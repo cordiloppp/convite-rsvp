@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { ApiError, api } from "../../api/client";
 import type { Invitation } from "../../api/types";
 import { Button, buttonClass, ErrorBanner, Field, inputClass } from "../../components/ui";
+import { DemoBanner } from "../../components/DemoBanner";
 import { useConfig } from "../../hooks/useConfig";
 import { formatDate, formatDateTimeShort, formatTime, plural } from "../../lib/format";
 
@@ -270,6 +271,7 @@ export default function Invitacion() {
 
   return (
     <div className="mx-auto min-h-dvh max-w-md bg-white shadow-sm sm:my-6 sm:min-h-0 sm:rounded-lg sm:overflow-hidden">
+      <DemoBanner />
       {event.imagen_portada_url && (
         <img
           src={event.imagen_portada_url}
