@@ -1,0 +1,40 @@
+@import "tailwindcss";
+@import "@fontsource/cormorant-garamond/400.css";
+@import "@fontsource/cormorant-garamond/500.css";
+@import "@fontsource/cormorant-garamond/600.css";
+@import "@fontsource-variable/instrument-sans";
+
+@theme {
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Instrument Sans Variable", system-ui, sans-serif;
+
+  --color-marfil: #faf7f0;
+  --color-marfil-oscuro: #f0ebe0;
+  --color-linea: #ddd6c8;
+  --color-gris: #6f685d;
+  --color-tinta: #1c1a17;
+  --color-dorado: #8a6d3b;
+  --color-dorado-suave: #c2a671;
+  --color-peligro: #a33a2a;
+
+  /* Colores de datos del resumen */
+  --color-confirmado: #a67c1e;
+  --color-ausente: #3d6fb8;
+}
+
+/* Cormorant usa numerales antiguos por defecto: su "1" se confunde con una "I". */
+.font-serif {
+  font-feature-settings: "lnum";
+}
+
+/* Tailwind 4 quita el puntero por defecto de los botones. */
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+body {
+  background-color: var(--color-marfil);
+  color: var(--color-tinta);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}

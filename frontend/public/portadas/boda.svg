@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Ramas de olivo sobre fondo marfil">
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4ecdc"/>
+      <stop offset="1" stop-color="#e3d6bc"/>
+    </linearGradient>
+    <path id="hoja" d="M0 0C10-13 30-15 46-4 31 6 12 9 0 0Z"/>
+    <g id="rama">
+      <path d="M0 0C70-22 150-34 250-30" fill="none" stroke="#6f6a3f" stroke-width="2"/>
+      <use href="#hoja" transform="translate(30 -9) rotate(-44)"/>
+      <use href="#hoja" transform="translate(44 -13) rotate(30)"/>
+      <use href="#hoja" transform="translate(84 -20) rotate(-40)"/>
+      <use href="#hoja" transform="translate(100 -22) rotate(28)"/>
+      <use href="#hoja" transform="translate(140 -27) rotate(-36)"/>
+      <use href="#hoja" transform="translate(156 -28) rotate(26)"/>
+      <use href="#hoja" transform="translate(196 -30) rotate(-30)"/>
+      <use href="#hoja" transform="translate(208 -30) rotate(22)"/>
+      <use href="#hoja" transform="translate(246 -30) rotate(-4)"/>
+    </g>
+  </defs>
+  <rect width="800" height="500" fill="url(#fondo)"/>
+  <circle cx="400" cy="250" r="168" fill="none" stroke="#b08d4f" stroke-width="1.5"/>
+  <circle cx="400" cy="250" r="156" fill="none" stroke="#b08d4f" stroke-width="0.75"/>
+  <g fill="#7d7a4a">
+    <use href="#rama" transform="translate(40 460)"/>
+    <use href="#rama" transform="translate(760 40) rotate(180)"/>
+    <use href="#rama" transform="translate(70 90) rotate(-22) scale(.8)" opacity=".75"/>
+    <use href="#rama" transform="translate(730 410) rotate(158) scale(.8)" opacity=".75"/>
+  </g>
+  <g fill="none" stroke="#8a6d3b" stroke-width="3">
+    <circle cx="384" cy="250" r="42"/>
+    <circle cx="416" cy="250" r="42"/>
+  </g>
+</svg>
